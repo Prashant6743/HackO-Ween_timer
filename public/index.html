@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HackO'Ween — 12-Hour Hackathon | IITM Sonipat</title>
+  <meta name="description" content="HackO'Ween — 12-hour hackathon at IITM, Sonipat. Oct 27–28, 2026. Build. Innovate. Create Before Sunrise." />
+
+  <!-- Google Fonts: Bebas Neue (bold timer), Outfit (modern clean UI), Anton -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Fullscreen Emergency Red Light Beacon Overlay -->
+  <div id="red-alert-overlay" class="red-alert-overlay"></div>
+
+  <!-- Three.js 3D WebGL Canvas for 3D Bats, and Embers -->
+  <div id="three-container"></div>
+
+  <!-- TOP LEFT: Test Alarm & Sound Controls -->
+  <div class="top-controls-left">
+    <button id="test-alert-btn" class="ctrl-btn test-alarm-btn" type="button" title="Test Emergency Red Light & Beep Alarm">
+      <span class="ctrl-icon-pulse">🚨</span>
+      <span class="ctrl-label">Test Alarm</span>
+    </button>
+    <button id="sound-toggle-btn" class="ctrl-btn sound-btn" type="button" title="Audio Alerts: ON (click to mute)">
+      <span id="sound-icon">🔊</span>
+    </button>
+  </div>
+
+  <!-- THEME TOGGLE BUTTON -->
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Switch theme">
+    <span class="toggle-track">
+      <span class="toggle-thumb">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </span>
+    </span>
+    <span class="toggle-text" id="theme-label">Dark</span>
+  </button>
+
+  <div class="page">
+
+    <!-- TOP: ALTA + Powered by Unstop -->
+    <div class="top-bar">
+      <span class="top-bar-text">ALTA School of Technology NCR &nbsp;·&nbsp; Powered by Unstop</span>
+    </div>
+
+    <!-- LOGO -->
+    <div class="logo-wrap">
+      <img id="logo-img" src="logo-light.png" alt="HackO'Ween Logo" class="logo-img" />
+    </div>
+
+    <!-- TAGLINE -->
+    <p class="tagline">12-Hour Hackathon &nbsp;·&nbsp; IITM, Sonipat &nbsp;·&nbsp; Oct 27–28, 2026</p>
+    <p class="sub-tagline">Ideas that haunt. <span class="accent">Solutions that impact.</span></p>
+
+    <!-- ALERT BANNER -->
+    <div id="alert-banner" class="alert-banner hidden">
+      <span class="alert-badge">CRITICAL WARNING</span>
+      <span id="alert-banner-text" class="alert-message">Time milestone reached</span>
+      <button id="alert-dismiss-btn" class="alert-dismiss" type="button" title="Dismiss Alert">✕</button>
+    </div>
+
+    <!-- TIMER CARD -->
+    <div id="timer-wrap" class="timer-wrap">
+      <p id="timer-phase-label" class="phase-label">Hackathon Begins In</p>
+
+      <div id="timer-display" class="timer-display">
+        <div class="timer-unit">
+          <span id="days" class="timer-num">--</span>
+          <span class="timer-label">Days</span>
+        </div>
+        <div class="timer-sep">:</div>
+        <div class="timer-unit">
+          <span id="hours" class="timer-num">--</span>
+          <span class="timer-label">Hours</span>
+        </div>
+        <div class="timer-sep">:</div>
+        <div class="timer-unit">
+          <span id="minutes" class="timer-num">--</span>
+          <span class="timer-label">Minutes</span>
+        </div>
+        <div class="timer-sep">:</div>
+        <div class="timer-unit">
+          <span id="seconds" class="timer-num">--</span>
+          <span class="timer-label">Seconds</span>
+        </div>
+      </div>
+
+      <div id="timer-ended-msg" class="timer-ended hidden">
+        🎃 The Hackathon Has Ended! Thank you for building with us!
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="three.min.js"></script>
+  <script src="three-scene.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

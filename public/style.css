@@ -1,0 +1,686 @@
+/* =========================================================
+   HackO'Ween — Minimal 3D Halloween Timer Page
+   Dual Theme: Atmospheric Light & Haunted Cyber Dark
+   Bold Typography, 3D WebGL Models, Neon & Candle Glow Effects
+   ========================================================= */
+
+:root {
+  /* --- Light Palette --- */
+  --bg-color:      #fdf5e8;
+  --bg-image:      url('light-bg.jpg');
+  --bg-overlay:    radial-gradient(ellipse 95% 85% at 50% 45%, rgba(253, 245, 232, 0.82) 0%, rgba(250, 237, 218, 0.70) 50%, rgba(240, 222, 195, 0.88) 100%);
+  --orange:        #e85d00;
+  --orange-warm:   #ff7a1a;
+  --orange-glow:   rgba(232, 93, 0, 0.35);
+  --text-primary:  #1b0d00;
+  --text-secondary:#542c0c;
+  --text-muted:    #8f4e1f;
+
+  /* Timer card & digits */
+  --timer-font:    'Bebas Neue', 'Anton', sans-serif;
+  --timer-num-col: #180d05;
+  --timer-shadow:  none;
+  --sep-color:     #e85d00;
+  --sep-shadow:    none;
+
+  --card-bg:       rgba(255, 255, 255, 0.55);
+  --card-border:   rgba(232, 93, 0, 0.22);
+  --card-shadow:   0 18px 48px rgba(232, 93, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --logo-filter:   drop-shadow(0 6px 24px rgba(232, 93, 0, 0.3));
+
+  /* Toggle button light */
+  --toggle-bg:     rgba(255, 255, 255, 0.88);
+  --toggle-border: rgba(232, 93, 0, 0.3);
+  --toggle-text:   #2b1200;
+  --toggle-track:  #ebd8c5;
+  --toggle-thumb:  #e85d00;
+  --toggle-shadow: 0 6px 20px rgba(232, 93, 0, 0.18);
+
+  --font:          'Outfit', sans-serif;
+  --mono:          'JetBrains Mono', monospace;
+}
+
+/* --- Dark Palette --- */
+body.dark {
+  --bg-color:      #060509;
+  --bg-image:      url('dark-bg.jpg');
+  --bg-overlay:    radial-gradient(ellipse 95% 85% at 50% 45%, rgba(6, 5, 10, 0.65) 0%, rgba(9, 7, 15, 0.50) 50%, rgba(4, 3, 6, 0.85) 100%),
+                   radial-gradient(circle at 50% 25%, rgba(255, 107, 0, 0.12) 0%, transparent 60%);
+  --orange:        #ff7a1a;
+  --orange-warm:   #ffa352;
+  --orange-glow:   rgba(255, 122, 26, 0.55);
+  --text-primary:  #ffffff;
+  --text-secondary:#dedee3;
+  --text-muted:    #a1a1aa;
+
+  /* Timer card & digits */
+  --timer-num-col: #ffffff;
+  --timer-shadow:  0 0 18px rgba(255, 122, 26, 0.35);
+  --sep-color:     #ff7a1a;
+  --sep-shadow:    0 0 14px rgba(255, 122, 26, 0.4);
+
+  --card-bg:       rgba(12, 10, 18, 0.62);
+  --card-border:   rgba(255, 122, 26, 0.35);
+  --card-shadow:   0 20px 60px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 107, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --logo-filter:   drop-shadow(0 6px 32px rgba(255, 122, 26, 0.55));
+
+  /* Toggle button dark */
+  --toggle-bg:     rgba(18, 16, 24, 0.88);
+  --toggle-border: rgba(255, 122, 26, 0.45);
+  --toggle-text:   #f4f4f5;
+  --toggle-track:  #272430;
+  --toggle-thumb:  #ff7a1a;
+  --toggle-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(255, 122, 26, 0.3);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg-color);
+  background-image: var(--bg-image);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.5s ease, color 0.4s ease;
+}
+
+/* Atmospheric Overlay between background and content */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: 0;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+
+/* Three.js 3D Container */
+#three-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#three-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* ---- Theme Toggle Button ---- */
+.theme-toggle {
+  position: fixed;
+  top: 22px;
+  right: 28px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 10px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  border-radius: 999px;
+  color: var(--toggle-text);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--toggle-shadow);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              border-color 0.3s ease,
+              background 0.3s ease,
+              color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: var(--toggle-shadow), 0 0 20px var(--orange-glow);
+}
+
+.theme-toggle:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Switch track & thumb */
+.toggle-track {
+  width: 44px;
+  height: 24px;
+  background: var(--toggle-track);
+  border-radius: 999px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: background 0.3s ease;
+}
+
+.toggle-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--toggle-thumb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.toggle-thumb svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Light mode: show sun in thumb */
+.icon-sun {
+  display: block;
+}
+.icon-moon {
+  display: none;
+}
+
+/* Dark mode: show moon in thumb */
+body.dark .icon-sun {
+  display: none;
+}
+body.dark .icon-moon {
+  display: block;
+}
+
+.toggle-text {
+  user-select: none;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Page Container ---- */
+.page {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px 20px;
+}
+
+/* ---- Top bar ---- */
+.top-bar {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.top-bar-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.95;
+  transition: color 0.3s ease;
+}
+
+/* ---- Logo ---- */
+.logo-wrap {
+  margin-bottom: 8px;
+}
+
+.logo-img {
+  height: clamp(84px, 12vw, 140px);
+  width: auto;
+  max-width: 90vw;
+  object-fit: contain;
+  filter: var(--logo-filter);
+  animation: logo-float 4s ease-in-out infinite;
+  transition: filter 0.4s ease, opacity 0.3s ease;
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+
+/* ---- Taglines ---- */
+.tagline {
+  font-size: clamp(0.72rem, 1.4vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.sub-tagline {
+  font-size: clamp(0.85rem, 1.7vw, 1.05rem);
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  text-align: center;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+
+.accent {
+  color: var(--orange);
+  font-weight: 800;
+  font-style: normal;
+  text-shadow: 0 0 10px var(--orange-glow);
+  transition: color 0.3s ease;
+}
+
+/* ---- Glassmorphism Timer Card ---- */
+.timer-wrap {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: clamp(16px, 2.5vw, 24px) clamp(24px, 4vw, 48px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--card-shadow);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.phase-label {
+  font-size: clamp(0.75rem, 1.4vw, 0.92rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 12px;
+  text-shadow: 0 0 12px var(--orange-glow);
+  transition: color 0.3s ease;
+}
+
+.timer-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 clamp(10px, 2.2vw, 28px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* BOLD TIMER FONT (Bebas Neue) */
+.timer-num {
+  font-family: var(--timer-font);
+  font-size: clamp(4.5rem, 11.5vw, 9.5rem);
+  font-weight: 400; /* Bebas Neue is inherently ultra-bold condensed */
+  letter-spacing: 0.04em;
+  color: var(--timer-num-col);
+  line-height: 0.95;
+  min-width: 1.8ch;
+  text-align: center;
+  text-shadow: var(--timer-shadow);
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Professional Odometer Tick Transition — No Color Shift, No Glowing Flash */
+.timer-num.tick {
+  animation: pro-odometer-tick 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pro-odometer-tick {
+  0% {
+    opacity: 0.35;
+    transform: translateY(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timer-label {
+  font-size: clamp(0.62rem, 1.1vw, 0.78rem);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+  transition: color 0.3s ease;
+}
+
+.timer-sep {
+  font-family: var(--timer-font);
+  font-size: clamp(3.5rem, 8.5vw, 7.5rem);
+  color: var(--sep-color);
+  text-shadow: var(--sep-shadow);
+  opacity: 0.85;
+  margin-bottom: 16px;
+  animation: sep-blink 1s step-end infinite;
+  line-height: 1;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+@keyframes sep-blink {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 0.2; }
+}
+
+/* ---- Ended state ---- */
+.timer-ended {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 800;
+  color: var(--orange);
+  padding: 16px 32px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- Responsive adjustments ---- */
+@media (max-width: 680px) {
+  html, body {
+    overflow: auto;
+  }
+  .page {
+    height: auto;
+    min-height: 100vh;
+    padding: 80px 16px 36px;
+  }
+  .theme-toggle {
+    top: 16px;
+    right: 16px;
+    padding: 6px 12px 6px 8px;
+  }
+  .toggle-track {
+    width: 38px;
+    height: 22px;
+  }
+  .toggle-thumb {
+    width: 18px;
+    height: 18px;
+  }
+  body.dark .toggle-thumb {
+    transform: translateX(16px);
+  }
+  .toggle-text {
+    font-size: 0.7rem;
+  }
+  .top-bar {
+    position: static;
+    transform: none;
+    margin-bottom: 16px;
+  }
+  .timer-wrap {
+    padding: 16px 14px;
+    border-radius: 20px;
+  }
+  .timer-sep {
+    display: none;
+  }
+  .timer-display {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .timer-unit {
+    padding: 0 12px;
+  }
+  .top-controls-left {
+    top: 16px;
+    left: 16px;
+    gap: 6px;
+  }
+  .ctrl-btn {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+}
+
+/* =========================================================
+   EMERGENCY RED LIGHT BEACON & ALERT SYSTEM
+   ========================================================= */
+
+/* Fullscreen Red Beacon Strobe Overlay */
+.red-alert-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  box-shadow: inset 0 0 100px rgba(255, 0, 30, 0.7), inset 0 0 240px rgba(255, 0, 0, 0.45);
+  background: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.08) 0%, rgba(255, 0, 30, 0.28) 100%);
+}
+
+.red-alert-overlay.active {
+  opacity: 1;
+  animation: red-beacon-strobe 1s ease-in-out infinite alternate;
+}
+
+@keyframes red-beacon-strobe {
+  0% {
+    opacity: 0.45;
+    box-shadow: inset 0 0 70px rgba(255, 0, 20, 0.45), inset 0 0 180px rgba(255, 0, 0, 0.25);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: inset 0 0 140px rgba(255, 0, 30, 0.95), inset 0 0 320px rgba(255, 0, 0, 0.65);
+  }
+}
+
+/* Alert Banner */
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(45, 8, 14, 0.9);
+  border: 1px solid rgba(255, 30, 45, 0.75);
+  box-shadow: 0 8px 32px rgba(255, 0, 40, 0.45), inset 0 1px 0 rgba(255, 120, 120, 0.35);
+  padding: 8px 18px 8px 12px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: banner-drop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 20;
+}
+
+@keyframes banner-drop {
+  from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.alert-badge {
+  background: #ff1a2e;
+  color: #ffffff;
+  font-family: var(--font);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(255, 0, 30, 0.85);
+  animation: badge-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes badge-pulse {
+  from { opacity: 0.85; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1.05); }
+}
+
+.alert-message {
+  color: #ffe6e8;
+  font-size: clamp(0.75rem, 1.3vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.alert-dismiss {
+  background: none;
+  border: none;
+  color: #ff99a0;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: color 0.2s, background 0.2s;
+}
+
+.alert-dismiss:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Card Red Alert State */
+.timer-wrap.alert-red {
+  border-color: rgba(255, 30, 50, 0.85) !important;
+  background: rgba(35, 6, 12, 0.75) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85),
+              0 0 45px rgba(255, 0, 35, 0.7),
+              0 0 95px rgba(255, 0, 0, 0.4),
+              inset 0 0 25px rgba(255, 0, 40, 0.3) !important;
+  animation: card-beacon-throb 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes card-beacon-throb {
+  0% {
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 0, 35, 0.45);
+  }
+  100% {
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 65px rgba(255, 0, 35, 0.9), 0 0 120px rgba(255, 0, 0, 0.5);
+  }
+}
+
+.timer-wrap.alert-red .phase-label {
+  color: #ff2a3b !important;
+  text-shadow: 0 0 16px rgba(255, 0, 35, 0.9) !important;
+}
+
+.timer-wrap.alert-red .timer-num {
+  color: #ff2a3b !important;
+  text-shadow: 0 0 18px #ff002e, 0 0 42px #ff0033, 0 0 85px rgba(255, 0, 40, 0.85) !important;
+}
+
+.timer-wrap.alert-red .timer-num.tick {
+  animation: pro-odometer-tick 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timer-wrap.alert-red .timer-sep {
+  color: #ff2a3b !important;
+  text-shadow: 0 0 24px #ff002e !important;
+}
+
+.timer-wrap.alert-red .timer-label {
+  color: #ff8a95 !important;
+}
+
+/* Top Left Controls: Test Alarm & Sound */
+.top-controls-left {
+  position: fixed;
+  top: 22px;
+  left: 28px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  border-radius: 999px;
+  color: var(--toggle-text);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--toggle-shadow);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              border-color 0.3s ease,
+              background 0.3s ease,
+              color 0.3s ease;
+}
+
+.ctrl-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: var(--toggle-shadow), 0 0 18px var(--orange-glow);
+}
+
+.ctrl-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.test-alarm-btn:hover {
+  border-color: rgba(255, 30, 45, 0.7);
+  box-shadow: var(--toggle-shadow), 0 0 22px rgba(255, 0, 30, 0.6);
+  color: #ff2a3b;
+}
+
+.ctrl-icon-pulse {
+  display: inline-block;
+  animation: siren-wiggle 2s ease-in-out infinite;
+}
+
+@keyframes siren-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20%      { transform: rotate(-14deg); }
+  40%      { transform: rotate(14deg); }
+  60%      { transform: rotate(-10deg); }
+  80%      { transform: rotate(10deg); }
+}
+
+.sound-btn {
+  padding: 8px 12px;
+}
+
