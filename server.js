@@ -28,10 +28,14 @@ app.all('/api/break', (req, res) => {
 });
 
 /**
- * Route: Admin Dashboard
+ * Route: Controller Dashboard (/ud and /admin)
  */
+app.get('/ud', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ud.html'));
+});
+
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  res.redirect('/ud');
 });
 
 // Fallback: serve index.html for any unmatched routes (SPA support)

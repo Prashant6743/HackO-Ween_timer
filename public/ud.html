@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — HackO'Ween Controller</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #09070f;
+      --card-bg: rgba(18, 14, 28, 0.85);
+      --card-border: rgba(255, 122, 26, 0.28);
+      --orange: #ff7a1a;
+      --orange-glow: rgba(255, 122, 26, 0.45);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.45);
+      --purple: #a855f7;
+      --purple-glow: rgba(168, 85, 247, 0.45);
+      --amber: #f59e0b;
+      --text-main: #f4f4f6;
+      --text-muted: #9e9aa8;
+      --font: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: radial-gradient(circle at 50% 20%, #1c142e 0%, #09070f 75%);
+      min-height: 100vh;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .admin-container {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    /* ---- Header ---- */
+    .admin-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      text-shadow: 0 0 25px var(--orange-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* ---- Card Glassmorphism ---- */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 26px 22px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(255, 122, 26, 0.12);
+      transition: all 0.3s ease;
+    }
+
+    /* ---- PIN Auth Box ---- */
+    .auth-box {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .auth-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .auth-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .pin-input {
+      width: 100%;
+      max-width: 260px;
+      padding: 14px 18px;
+      font-size: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.3em;
+      text-align: center;
+      border: 2px solid rgba(255, 122, 26, 0.4);
+      background: rgba(8, 6, 14, 0.85);
+      border-radius: 14px;
+      color: #ffffff;
+      outline: none;
+      transition: all 0.25s ease;
+      margin-bottom: 16px;
+    }
+
+    .pin-input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 20px var(--orange-glow);
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 260px;
+      padding: 13px 24px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: var(--font);
+      background: linear-gradient(135deg, #ff7a1a 0%, #e05300 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 122, 26, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(255, 122, 26, 0.6);
+    }
+
+    /* ---- Dashboard Controls ---- */
+    .dashboard-view {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Status Indicator Banner */
+    .status-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: rgba(12, 10, 20, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .status-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #71717a;
+      transition: all 0.3s ease;
+    }
+
+    .status-dot.active-break {
+      background: var(--green);
+      box-shadow: 0 0 16px var(--green-glow), 0 0 30px var(--green);
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    .status-dot.active-judging {
+      background: var(--amber);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.6), 0 0 30px var(--amber);
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    .status-dot.active-countdown {
+      background: var(--orange);
+      box-shadow: 0 0 14px var(--orange-glow);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.85; }
+    }
+
+    .status-text-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .status-text-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .status-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-tag.tag-break {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #34d399;
+    }
+
+    .status-tag.tag-judging {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde68a;
+    }
+
+    .status-tag.tag-countdown {
+      background: rgba(255, 122, 26, 0.18);
+      border: 1px solid rgba(255, 122, 26, 0.4);
+      color: #ff9d54;
+    }
+
+    /* ---- Global Resume / Stop Button (Shown when Break or Judging is Active) ---- */
+    .resume-bar {
+      margin: 2px 0;
+    }
+
+    .btn-resume-all {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-family: var(--font);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 1.5px solid rgba(110, 231, 183, 0.4);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-resume-all:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.65);
+    }
+
+    /* ---- Two-Column Trigger Buttons ---- */
+    .triggers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 520px) {
+      .triggers-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      background: rgba(12, 10, 20, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.3s ease;
+    }
+
+    .mode-card.is-active {
+      border-color: var(--orange);
+      box-shadow: 0 0 20px rgba(255, 122, 26, 0.2);
+    }
+
+    .mode-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mode-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #ffffff;
+    }
+
+    .trigger-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    /* Break Trigger Button */
+    .btn-trigger-break {
+      background: linear-gradient(135deg, #ff7a1a 0%, #d44500 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(255, 122, 26, 0.35);
+      border-color: rgba(255, 170, 102, 0.3);
+    }
+
+    .btn-trigger-break:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(255, 122, 26, 0.55);
+    }
+
+    /* Judging Trigger Button */
+    .btn-trigger-judging {
+      background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+      border-color: rgba(253, 230, 138, 0.3);
+    }
+
+    .btn-trigger-judging:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(245, 158, 11, 0.55);
+    }
+
+    .btn-trigger-stop {
+      background: #27272a;
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-trigger-stop:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* Custom Inputs inside mode cards */
+    .mode-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(8, 6, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #ffffff;
+      font-family: var(--font);
+      font-size: 0.84rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .mode-input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 12px var(--orange-glow);
+    }
+
+    .field-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .input-with-btn {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .input-with-btn .mode-input {
+      flex: 1;
+      margin-bottom: 0 !important;
+    }
+
+    .btn-apply-update {
+      padding: 9px 13px;
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: rgba(255, 122, 26, 0.2);
+      border: 1px solid var(--orange);
+      color: #ffa65c;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .btn-apply-update:hover {
+      background: var(--orange);
+      color: #ffffff;
+      box-shadow: 0 0 14px var(--orange-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-apply-update:active {
+      transform: translateY(0);
+    }
+
+    .preset-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .preset-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #d4d4d8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-pill:hover {
+      background: rgba(255, 122, 26, 0.18);
+      border-color: var(--orange);
+      color: #ffffff;
+    }
+
+    /* ---- Live Preview Mockup ---- */
+    .preview-card {
+      background: rgba(6, 4, 10, 0.9);
+      border: 1px solid rgba(255, 122, 26, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .preview-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--orange);
+    }
+
+    .preview-link {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #93c5fd;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s ease;
+    }
+
+    .preview-link:hover {
+      color: #bfdbfe;
+      text-decoration: underline;
+    }
+
+    .preview-screen-content {
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(18, 14, 28, 0.85);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .preview-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .preview-msg {
+      font-size: 0.88rem;
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    /* ---- Footer / Logout ---- */
+    .admin-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .btn-logout {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #18181b;
+      border: 1px solid var(--orange);
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <h1 class="brand-title">🎃 HACKO'WEEN</h1>
+      <p class="brand-subtitle">Master Event Controller</p>
+    </header>
+
+    <!-- Card -->
+    <div class="admin-card">
+
+      <!-- STEP 1: PIN AUTH VIEW -->
+      <div id="auth-view" class="auth-box">
+        <h2 class="auth-title">🔐 Admin Authentication</h2>
+        <p class="auth-desc">Enter the 4-digit security PIN to unlock controller</p>
+        <form id="pin-form" onsubmit="event.preventDefault(); handlePinSubmit();">
+          <input
+            id="pin-input"
+            type="password"
+            maxlength="6"
+            class="pin-input"
+            placeholder="••••"
+            autocomplete="current-password"
+            autofocus
+          />
+          <br />
+          <button type="submit" class="btn-submit">
+            <span>Unlock Dashboard</span>
+            <span>→</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2: DASHBOARD CONTROLS -->
+      <div id="dashboard-view" class="dashboard-view hidden">
+
+        <!-- Live Status Banner -->
+        <div class="status-banner">
+          <div class="status-info">
+            <div id="status-dot" class="status-dot active-countdown"></div>
+            <div>
+              <div class="status-text-title">Screen Status</div>
+              <div id="status-text-val" class="status-text-val">Countdown Active</div>
+            </div>
+          </div>
+          <span id="status-tag" class="status-tag tag-countdown">Hacking</span>
+        </div>
+
+        <!-- Stop / Resume Normal Button (Visible whenever Break or Judging is active) -->
+        <div id="resume-bar" class="resume-bar hidden">
+          <button class="btn-resume-all" type="button" onclick="stopActiveMode()">
+            <span>⚡ RESUME NORMAL COUNTDOWN TIMER</span>
+          </button>
+        </div>
+
+        <!-- Triggers Grid: Break vs Judging -->
+        <div class="triggers-grid">
+
+          <!-- 1. Food Break Mode Card -->
+          <div id="break-mode-card" class="mode-card">
+            <div class="mode-header">
+              <span class="mode-title">🍕 Food Break</span>
+            </div>
+
+            <button
+              id="break-toggle-btn"
+              class="trigger-btn btn-trigger-break"
+              type="button"
+              onclick="triggerBreak()"
+            >
+              <span>🍕 Start Food Break</span>
+            </button>
+
+            <div>
+              <label class="field-label">Break Announcement</label>
+              <div class="input-with-btn">
+                <input
+                  id="break-msg-input"
+                  class="mode-input"
+                  type="text"
+                  value="Break Time — Please Enjoy Your Food 🍕"
+                  placeholder="Type custom food message..."
+                />
+                <button
+                  type="button"
+                  class="btn-apply-update"
+                  onclick="sendCustomBreakMsg()"
+                  title="Push custom message to screen (or press Enter)"
+                >
+                  Update
+                </button>
+              </div>
+              <div class="preset-pill-row">
+                <span class="preset-pill" onclick="setBreakMsg('Break Time — Please Enjoy Your Food 🍕')">🍕 Food</span>
+                <span class="preset-pill" onclick="setBreakMsg('Dinner Is Served! Enjoy Your Meal 🍔🍕')">🍔 Dinner</span>
+                <span class="preset-pill" onclick="setBreakMsg('Midnight Snacks & Warm Coffee ☕')">☕ Snacks</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Judging Round Mode Card -->
+          <div id="judging-mode-card" class="mode-card">
+            <div class="mode-header">
+              <span class="mode-title">⚖️ Judging Round</span>
+            </div>
+
+            <button
+              id="judging-toggle-btn"
+              class="trigger-btn btn-trigger-judging"
+              type="button"
+              onclick="triggerJudging()"
+            >
+              <span>⚖️ Start Judging</span>
+            </button>
+
+            <div>
+              <label class="field-label">Round Title</label>
+              <div class="input-with-btn" style="margin-bottom: 6px;">
+                <input
+                  id="judging-title-input"
+                  class="mode-input"
+                  type="text"
+                  value="JUDGING ROUND IS LIVE"
+                  placeholder="Round title..."
+                />
+              </div>
+
+              <label class="field-label">Custom Message / Instructions</label>
+              <div class="input-with-btn">
+                <input
+                  id="judging-msg-input"
+                  class="mode-input"
+                  type="text"
+                  value="Teams, please prepare your live pitches & project demos"
+                  placeholder="Type custom message..."
+                />
+                <button
+                  type="button"
+                  class="btn-apply-update"
+                  onclick="sendCustomJudgingMsg()"
+                  title="Push custom message to screen (or press Enter)"
+                >
+                  Update
+                </button>
+              </div>
+
+              <div class="preset-pill-row">
+                <span class="preset-pill" onclick="setJudgingPreset('JUDGING ROUND 1', 'Teams, please prepare your 3-minute pitches & working demo')">Round 1</span>
+                <span class="preset-pill" onclick="setJudgingPreset('CODE & ARCHITECTURE REVIEW', 'Judges are inspecting repositories & tech stacks')">Code Review</span>
+                <span class="preset-pill" onclick="setJudgingPreset('FINAL JUDGMENT ROUND', 'Please prepare, we will call your team')">Finals</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Live Preview of Main Projector Screen -->
+        <div class="preview-card">
+          <div class="preview-header">
+            <span class="preview-badge">Live Screen Simulation</span>
+            <a href="/" target="_blank" class="preview-link">
+              <span>Open Screen</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          </div>
+
+          <div class="preview-screen-content">
+            <div id="preview-title" class="preview-title">HACKATHON LIVE</div>
+            <div id="preview-msg" class="preview-msg">Countdown running continuously in background</div>
+          </div>
+        </div>
+
+        <!-- Footer / Session -->
+        <div class="admin-footer">
+          <span>Countdown continues uninterrupted in background</span>
+          <button class="btn-logout" type="button" onclick="handleLogout()">Lock Dashboard</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Action Applied</div>
+
+  <script>
+    // State - Tokens are opaque cryptographically random session IDs issued by the backend
+    let adminToken = sessionStorage.getItem('hackoween_admin_token') || '';
+    let currentMode = 'normal'; // 'normal' | 'break' | 'judging'
+    let currentMessage = '';
+    let currentRoundName = '';
+
+    // BroadcastChannel for instant same-browser sync
+    let adminChannel = null;
+    try {
+      adminChannel = new BroadcastChannel('hackoween_admin');
+    } catch (e) {}
+
+    // Elements
+    const authView           = document.getElementById('auth-view');
+    const dashboardView      = document.getElementById('dashboard-view');
+    const pinInput           = document.getElementById('pin-input');
+    const statusDot          = document.getElementById('status-dot');
+    const statusTextVal      = document.getElementById('status-text-val');
+    const statusTag          = document.getElementById('status-tag');
+    const resumeBar          = document.getElementById('resume-bar');
+    const breakModeCard      = document.getElementById('break-mode-card');
+    const judgingModeCard    = document.getElementById('judging-mode-card');
+    const breakToggleBtn     = document.getElementById('break-toggle-btn');
+    const judgingToggleBtn   = document.getElementById('judging-toggle-btn');
+    const breakMsgInput      = document.getElementById('break-msg-input');
+    const judgingTitleInput  = document.getElementById('judging-title-input');
+    const judgingMsgInput    = document.getElementById('judging-msg-input');
+    const previewTitle       = document.getElementById('preview-title');
+    const previewMsg         = document.getElementById('preview-msg');
+    const toast              = document.getElementById('toast');
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    async function handlePinSubmit() {
+      const pin = pinInput.value.trim();
+      if (!pin) {
+        showToast('Please enter the security PIN');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/break', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+
+        if (res.status === 429) {
+          const errData = await res.json();
+          showToast(`⏳ ${errData.error || 'Too many attempts. Please wait.'}`);
+          return;
+        }
+
+        if (res.status === 401) {
+          showToast('❌ Incorrect PIN. Access denied.');
+          pinInput.value = '';
+          pinInput.focus();
+          return;
+        }
+
+        const data = await res.json();
+        if (data.token) {
+          adminToken = data.token;
+          sessionStorage.setItem('hackoween_admin_token', data.token);
+        }
+        // Immediately wipe entered PIN from memory and DOM
+        pinInput.value = '';
+
+        showDashboard();
+        applyState(data);
+        showToast('🔓 Admin Dashboard Unlocked');
+      } catch (err) {
+        showToast('Network error, please retry');
+      }
+    }
+
+    function showDashboard() {
+      authView.classList.add('hidden');
+      dashboardView.classList.remove('hidden');
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('hackoween_admin_token');
+      adminToken = '';
+      dashboardView.classList.add('hidden');
+      authView.classList.remove('hidden');
+      pinInput.value = '';
+      pinInput.focus();
+      showToast('Dashboard Locked');
+    }
+
+    function setBreakMsg(txt) {
+      breakMsgInput.value = txt;
+      const isSnack = txt.toLowerCase().includes('snack') || txt.toLowerCase().includes('coffee') || txt.toLowerCase().includes('breakfast');
+      if (currentMode === 'break') {
+        postEventState('break', txt, '', isSnack);
+      }
+    }
+
+    function setJudgingPreset(title, msg) {
+      judgingTitleInput.value = title;
+      judgingMsgInput.value = msg;
+      const hidePills = title.toLowerCase().includes('code') || msg.toLowerCase().includes('code') || title.toLowerCase().includes('final');
+      if (currentMode === 'judging') {
+        postEventState('judging', msg, title, hidePills);
+      }
+    }
+
+    function applyState(data) {
+      const mode = data.mode || (data.active ? 'break' : 'normal');
+      currentMode = mode;
+      currentMessage = data.message || '';
+      currentRoundName = data.roundName || '';
+
+      // PREVENT OVERWRITING INPUTS WHILE USER IS TYPING OR FOCUSED
+      const isEditingBreak = (document.activeElement === breakMsgInput);
+      const isEditingJudgingMsg = (document.activeElement === judgingMsgInput);
+      const isEditingJudgingTitle = (document.activeElement === judgingTitleInput);
+
+      if (!isEditingBreak && data.message && mode === 'break') {
+        breakMsgInput.value = data.message;
+      }
+      if (!isEditingJudgingMsg && data.message && mode === 'judging') {
+        judgingMsgInput.value = data.message;
+      }
+      if (!isEditingJudgingTitle && data.roundName) {
+        judgingTitleInput.value = data.roundName;
+      }
+
+      // Update Cards
+      breakModeCard.classList.toggle('is-active', mode === 'break');
+      judgingModeCard.classList.toggle('is-active', mode === 'judging');
+
+      if (mode === 'break') {
+        // BREAK ACTIVE
+        statusDot.className = 'status-dot active-break';
+        statusTextVal.textContent = 'Food Break Active';
+        statusTag.className = 'status-tag tag-break';
+        statusTag.textContent = 'Break Active';
+
+        resumeBar.classList.remove('hidden');
+        breakToggleBtn.className = 'trigger-btn btn-trigger-stop';
+        breakToggleBtn.innerHTML = '<span>✕ Stop Food Break</span>';
+
+        judgingToggleBtn.className = 'trigger-btn btn-trigger-judging';
+        judgingToggleBtn.innerHTML = '<span>⚖️ Switch to Judging</span>';
+
+        previewTitle.textContent = '🍕 BREAK TIME';
+        previewTitle.style.color = '#34d399';
+        previewMsg.textContent = breakMsgInput.value || 'Please Enjoy Your Food';
+      } else if (mode === 'judging') {
+        // JUDGING ACTIVE
+        statusDot.className = 'status-dot active-judging';
+        statusTextVal.textContent = 'Judging Round Active';
+        statusTag.className = 'status-tag tag-judging';
+        statusTag.textContent = 'Judging Active';
+
+        resumeBar.classList.remove('hidden');
+        judgingToggleBtn.className = 'trigger-btn btn-trigger-stop';
+        judgingToggleBtn.innerHTML = '<span>✕ Stop Judging Round</span>';
+
+        breakToggleBtn.className = 'trigger-btn btn-trigger-break';
+        breakToggleBtn.innerHTML = '<span>🍕 Switch to Food Break</span>';
+
+        previewTitle.textContent = judgingTitleInput.value || 'JUDGING ROUND IS LIVE';
+        previewTitle.style.color = '#fde68a';
+        previewMsg.textContent = judgingMsgInput.value || 'Teams, please prepare your live pitches';
+      } else {
+        // NORMAL COUNTDOWN ACTIVE
+        statusDot.className = 'status-dot active-countdown';
+        statusTextVal.textContent = 'Countdown Active';
+        statusTag.className = 'status-tag tag-countdown';
+        statusTag.textContent = 'Hacking';
+
+        resumeBar.classList.add('hidden');
+        breakToggleBtn.className = 'trigger-btn btn-trigger-break';
+        breakToggleBtn.innerHTML = '<span>🍕 Start Food Break</span>';
+
+        judgingToggleBtn.className = 'trigger-btn btn-trigger-judging';
+        judgingToggleBtn.innerHTML = '<span>⚖️ Start Judging</span>';
+
+        previewTitle.textContent = 'HACKATHON LIVE';
+        previewTitle.style.color = '#ffffff';
+        previewMsg.textContent = 'Countdown running continuously in background';
+      }
+    }
+
+    async function postEventState(mode, message, roundName, hidePills) {
+      if (!adminToken) {
+        handleLogout();
+        showToast('Please login to apply changes');
+        return;
+      }
+
+      try {
+        const isCode = Boolean(hidePills) || (roundName && roundName.toLowerCase().includes('code'));
+        const res = await fetch('/api/break', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify({
+            token: adminToken,
+            mode: mode,
+            message: message,
+            roundName: roundName,
+            hidePills: isCode
+          })
+        });
+
+        if (res.status === 401) {
+          handleLogout();
+          showToast('Session expired, re-enter PIN');
+          return;
+        }
+
+        if (res.status === 429) {
+          const errData = await res.json();
+          showToast(`⏳ ${errData.error || 'Too many attempts.'}`);
+          return;
+        }
+
+        const data = await res.json();
+        applyState(data);
+
+        // Broadcast to main screen instances
+        const payload = {
+          type: 'BREAK_UPDATE',
+          mode: data.mode,
+          active: data.active,
+          message: data.message,
+          roundName: data.roundName,
+          hidePills: isCode
+        };
+
+        if (adminChannel) {
+          adminChannel.postMessage(payload);
+        }
+        localStorage.setItem('hackoween_break_sync', JSON.stringify({ ...payload, ts: Date.now() }));
+
+        if (mode === 'break') showToast('🍕 Food Break Activated on Screen!');
+        else if (mode === 'judging') showToast('⚖️ Judging Round Activated on Screen!');
+        else showToast('⚡ Normal Countdown Timer Resumed!');
+      } catch (err) {
+        showToast('Error updating state');
+      }
+    }
+
+    function triggerBreak() {
+      if (currentMode === 'break') {
+        stopActiveMode();
+      } else {
+        const msg = breakMsgInput.value.trim() || 'Break Time — Please Enjoy Your Food 🍕';
+        const isSnack = msg.toLowerCase().includes('snack') || msg.toLowerCase().includes('coffee') || msg.toLowerCase().includes('breakfast');
+        postEventState('break', msg, '', isSnack);
+      }
+    }
+
+    function triggerJudging() {
+      if (currentMode === 'judging') {
+        stopActiveMode();
+      } else {
+        const title = judgingTitleInput.value.trim() || 'JUDGING ROUND IS LIVE';
+        const msg = judgingMsgInput.value.trim() || 'Teams, please prepare your live pitches & project demos';
+        const isCode = title.toLowerCase().includes('code') || msg.toLowerCase().includes('code');
+        postEventState('judging', msg, title, isCode);
+      }
+    }
+
+    function stopActiveMode() {
+      postEventState('normal', '', '', false);
+    }
+
+    async function fetchState() {
+      try {
+        const res = await fetch('/api/break');
+        if (res.ok) {
+          const data = await res.json();
+          applyState(data);
+        }
+      } catch (err) {}
+    }
+
+    function sendCustomJudgingMsg() {
+      const title = judgingTitleInput.value.trim() || 'JUDGING ROUND IS LIVE';
+      const msg = judgingMsgInput.value.trim() || 'Teams, please prepare your live pitches & project demos';
+      const isCode = title.toLowerCase().includes('code') || msg.toLowerCase().includes('code');
+      postEventState('judging', msg, title, isCode);
+    }
+
+    function sendCustomBreakMsg() {
+      const msg = breakMsgInput.value.trim() || 'Break Time — Please Enjoy Your Food 🍕';
+      const isSnack = msg.toLowerCase().includes('snack') || msg.toLowerCase().includes('coffee') || msg.toLowerCase().includes('breakfast');
+      postEventState('break', msg, '', isSnack);
+    }
+
+    // Live preview updates as user types
+    judgingTitleInput.addEventListener('input', () => {
+      previewTitle.textContent = judgingTitleInput.value.trim() || 'JUDGING ROUND IS LIVE';
+    });
+
+    judgingMsgInput.addEventListener('input', () => {
+      previewMsg.textContent = judgingMsgInput.value.trim() || 'Teams, please prepare your live pitches';
+    });
+
+    breakMsgInput.addEventListener('input', () => {
+      previewMsg.textContent = breakMsgInput.value.trim() || 'Break Time — Please Enjoy Your Food 🍕';
+    });
+
+    // Enter key shortcuts to push update immediately
+    judgingTitleInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendCustomJudgingMsg();
+      }
+    });
+
+    judgingMsgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendCustomJudgingMsg();
+      }
+    });
+
+    breakMsgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendCustomBreakMsg();
+      }
+    });
+
+    if (adminToken) {
+      showDashboard();
+      fetchState();
+    } else {
+      fetchState();
+    }
+
+    // Periodic poll
+    setInterval(fetchState, 3000);
+  </script>
+</body>
+</html>
