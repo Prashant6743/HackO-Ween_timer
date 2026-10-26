@@ -1,9 +1,13 @@
 const express = require('express');
 const path = require('path');
 const timeHandler = require('./api/time');
+const breakHandler = require('./api/break');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Parse JSON bodies for POST requests
+app.use(express.json());
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -14,6 +18,20 @@ app.use(express.static(path.join(__dirname, 'public')));
  */
 app.get('/api/time', (req, res) => {
   timeHandler(req, res);
+});
+
+/**
+ * API: Food/Dinner Break state handler (GET and POST)
+ */
+app.all('/api/break', (req, res) => {
+  breakHandler(req, res);
+});
+
+/**
+ * Route: Admin Dashboard
+ */
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Fallback: serve index.html for any unmatched routes (SPA support)

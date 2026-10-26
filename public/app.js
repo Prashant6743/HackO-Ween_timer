@@ -16,8 +16,14 @@ const secsEl          = document.getElementById('seconds');
 const phaseEl         = document.getElementById('timer-phase-label');
 const displayEl       = document.getElementById('timer-display');
 const endedEl         = document.getElementById('timer-ended-msg');
-const timerWrap       = document.getElementById('timer-wrap');
-const logoImg         = document.getElementById('logo-img');
+const timerWrap         = document.getElementById('timer-wrap');
+const breakCard         = document.getElementById('break-card');
+const breakMessageText  = document.getElementById('break-message-text');
+const breakPillRow      = document.getElementById('break-pill-row');
+const judgingCard       = document.getElementById('judging-card');
+const judgingRoundTitle = document.getElementById('judging-round-title');
+const judgingMessageText= document.getElementById('judging-message-text');
+const logoImg           = document.getElementById('logo-img');
 const altaLogo        = document.getElementById('alta-logo');
 const themeToggle     = document.getElementById('theme-toggle');
 const themeLabel      = document.getElementById('theme-label');
@@ -287,6 +293,9 @@ async function sync() {
     serverOffset = new Date(data.serverTime).getTime() + latency - t1;
     startUTC = new Date(data.targets.hackathonStart);
     endUTC   = new Date(data.targets.hackathonEnd);
+    if (data.break) {
+      setEventMode(data.break);
+    }
   } catch (e) {
     console.warn('[Timer] sync failed:', e);
   }
@@ -362,10 +371,102 @@ function update() {
   checkAlertMilestones(total);
 }
 
+/* ─── Event Mode State Management (Food Break & Judging Round) ─── */
+let currentEventMode = 'normal';
+
+function setEventMode(state) {
+  if (!state) return;
+
+  const mode = state.mode || (state.active ? 'break' : 'normal');
+  currentEventMode = mode;
+
+  if (!timerWrap) return;
+
+  if (mode === 'judging') {
+    // Show Judging Round Card, Hide Food Break & Timer
+    if (judgingCard) {
+      if (judgingRoundTitle && state.roundName) {
+        judgingRoundTitle.textContent = state.roundName;
+      }
+      if (judgingMessageText && state.message) {
+        judgingMessageText.textContent = state.message;
+      }
+      judgingCard.classList.remove('hidden');
+    }
+    if (breakCard) breakCard.classList.add('hidden');
+    timerWrap.classList.add('hidden');
+  } else if (mode === 'break') {
+    // Show Food Break Card, Hide Judging & Timer
+    if (breakCard) {
+      if (breakMessageText && state.message) {
+        breakMessageText.textContent = state.message;
+      }
+
+      // Check if message is for Snacks or customized break without food pills
+      const msgLower = (state.message || '').toLowerCase();
+      const isSnacks = Boolean(state.hidePills) ||
+                       msgLower.includes('snack') ||
+                       msgLower.includes('coffee') ||
+                       msgLower.includes('tea') ||
+                       msgLower.includes('breakfast');
+
+      if (breakPillRow) {
+        if (isSnacks) {
+          breakPillRow.classList.add('hidden');
+        } else {
+          breakPillRow.classList.remove('hidden');
+        }
+      }
+
+      breakCard.classList.remove('hidden');
+    }
+    if (judgingCard) judgingCard.classList.add('hidden');
+    timerWrap.classList.add('hidden');
+  } else {
+    // Normal: Show Live Countdown Timer, Hide Overlays
+    if (breakCard) breakCard.classList.add('hidden');
+    if (judgingCard) judgingCard.classList.add('hidden');
+    timerWrap.classList.remove('hidden');
+  }
+}
+
+// Poll /api/break every 2.5s for sync across different devices/phones
+async function pollBreakStatus() {
+  try {
+    const res = await fetch('/api/break');
+    if (res.ok) {
+      const data = await res.json();
+      setEventMode(data);
+    }
+  } catch (err) {}
+}
+
+// Same-browser zero-latency sync via BroadcastChannel
+try {
+  const adminChannel = new BroadcastChannel('hackoween_admin');
+  adminChannel.onmessage = (event) => {
+    if (event.data && event.data.type === 'BREAK_UPDATE') {
+      setEventMode(event.data);
+    }
+  };
+} catch (e) {}
+
+// Same-browser storage sync listener
+window.addEventListener('storage', (e) => {
+  if (e.key === 'hackoween_break_sync' && e.newValue) {
+    try {
+      const parsed = JSON.parse(e.newValue);
+      setEventMode(parsed);
+    } catch (err) {}
+  }
+});
+
 /* ─── Boot ─── */
 (async function init() {
   await sync();
+  await pollBreakStatus();
   update();
   setInterval(update, 1000);
-  setInterval(sync, 30_000); // re-sync every 30s
+  setInterval(sync, 30_000); // re-sync time every 30s
+  setInterval(pollBreakStatus, 2500); // sync break state every 2.5s
 })();

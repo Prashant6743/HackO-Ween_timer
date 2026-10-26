@@ -304,6 +304,269 @@ body.dark .icon-moon {
   transition: color 0.3s ease;
 }
 
+/* ---- Break Time Display Card ---- */
+.break-card {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: clamp(24px, 3.5vw, 36px) clamp(24px, 5vw, 56px);
+  max-width: 680px;
+  width: 90vw;
+  background: var(--card-bg);
+  border: 1.5px solid rgba(255, 122, 26, 0.45);
+  border-radius: 28px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(255, 122, 26, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: break-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.4s ease;
+}
+
+@keyframes break-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.break-icon-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.break-emoji-main {
+  font-size: clamp(2.5rem, 5vw, 3.4rem);
+  display: inline-block;
+  animation: pulse-main 2.5s ease-in-out infinite;
+}
+
+.break-emoji {
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  display: inline-block;
+}
+
+.emoji-float-1 {
+  animation: float-left 3s ease-in-out infinite;
+}
+
+.emoji-float-2 {
+  animation: float-right 3.2s ease-in-out infinite;
+}
+
+@keyframes float-left {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+@keyframes float-right {
+  0%, 100% { transform: translateY(0) rotate(6deg); }
+  50% { transform: translateY(-8px) rotate(-4deg); }
+}
+
+@keyframes pulse-main {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.break-heading {
+  font-family: 'Anton', 'Bebas Neue', sans-serif;
+  font-size: clamp(2.6rem, 6.5vw, 4.2rem);
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  text-shadow: 0 0 25px var(--orange-glow), 0 4px 12px rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+
+body:not(.dark) .break-heading {
+  color: #1a0f00;
+  text-shadow: 0 2px 14px rgba(255, 122, 26, 0.35);
+}
+
+.break-message-text {
+  font-size: clamp(1.15rem, 2.5vw, 1.7rem);
+  font-weight: 800;
+  color: #ffa65c;
+  margin-bottom: 18px;
+  text-shadow: 0 0 16px rgba(255, 166, 92, 0.4);
+  line-height: 1.3;
+}
+
+body:not(.dark) .break-message-text {
+  color: #c44a00;
+  text-shadow: none;
+}
+
+.break-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.break-pill {
+  font-size: clamp(0.75rem, 1.3vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 122, 26, 0.14);
+  border: 1px solid rgba(255, 122, 26, 0.35);
+  color: #ffe0cc;
+  backdrop-filter: blur(8px);
+}
+
+body:not(.dark) .break-pill {
+  background: rgba(255, 122, 26, 0.12);
+  border-color: rgba(255, 122, 26, 0.35);
+  color: #5a2800;
+}
+
+.break-subtext {
+  font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
+/* ---- Judging Round Display Card ---- */
+.judging-card {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: clamp(24px, 3.5vw, 36px) clamp(24px, 5vw, 56px);
+  max-width: 700px;
+  width: 90vw;
+  background: var(--card-bg);
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  border-radius: 28px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: judge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.4s ease;
+}
+
+@keyframes judge-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.judging-icon-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.judging-icon-main {
+  font-size: clamp(2.6rem, 5.2vw, 3.5rem);
+  display: inline-block;
+  animation: pulse-main 2.5s ease-in-out infinite;
+}
+
+.judging-icon-badge {
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  display: inline-block;
+  animation: float-left 3s ease-in-out infinite;
+}
+
+.judging-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(168, 85, 247, 0.18);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  color: #c084fc;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.judging-heading {
+  font-family: 'Anton', 'Bebas Neue', sans-serif;
+  font-size: clamp(2.6rem, 6.5vw, 4.2rem);
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(245, 158, 11, 0.5), 0 4px 14px rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+
+body:not(.dark) .judging-heading {
+  color: #1c1402;
+  text-shadow: 0 2px 14px rgba(245, 158, 11, 0.35);
+}
+
+.judging-message-text {
+  font-size: clamp(1.15rem, 2.5vw, 1.7rem);
+  font-weight: 800;
+  color: #fde68a;
+  margin-bottom: 18px;
+  text-shadow: 0 0 16px rgba(253, 230, 138, 0.35);
+  line-height: 1.3;
+}
+
+body:not(.dark) .judging-message-text {
+  color: #92400e;
+  text-shadow: none;
+}
+
+.judging-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.judging-pill {
+  font-size: clamp(0.75rem, 1.3vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fef3c7;
+  backdrop-filter: blur(8px);
+}
+
+body:not(.dark) .judging-pill {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #451a03;
+}
+
+.judging-subtext {
+  font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
 /* ---- Glassmorphism Timer Card ---- */
 .timer-wrap {
   position: relative;
