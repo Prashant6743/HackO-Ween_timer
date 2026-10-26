@@ -231,8 +231,8 @@ body.dark .icon-moon {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
-  padding: 24px 20px;
+  min-height: 100%;
+  padding: 60px 20px 80px;
 }
 
 /* ---- Top bar ---- */
@@ -260,7 +260,7 @@ body.dark .icon-moon {
 }
 
 .logo-img {
-  height: clamp(84px, 12vw, 140px);
+  height: clamp(94px, 13vw, 155px);
   width: auto;
   max-width: 90vw;
   object-fit: contain;
@@ -465,13 +465,20 @@ body.dark .icon-moon {
   .timer-unit {
     padding: 0 12px;
   }
-  .top-controls-left {
-    top: 16px;
-    left: 16px;
-    gap: 6px;
+  .top-brand-left {
+    top: 14px;
+    left: 14px;
+  }
+  .alta-logo-img {
+    height: 34px;
+    max-width: 155px;
+  }
+  .bottom-controls {
+    bottom: 14px;
+    gap: 8px;
   }
   .ctrl-btn {
-    padding: 6px 10px;
+    padding: 6px 12px;
     font-size: 0.72rem;
   }
 }
@@ -617,15 +624,58 @@ body.dark .icon-moon {
   color: #ff8a95 !important;
 }
 
-/* Top Left Controls: Test Alarm & Sound */
-.top-controls-left {
+/* Top Left Brand: ALTA Logo */
+.top-brand-left {
   position: fixed;
-  top: 22px;
+  top: 18px;
   left: 28px;
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 10px;
+}
+
+.alta-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.alta-logo-img {
+  height: clamp(40px, 4.8vw, 56px);
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.3s ease,
+              opacity 0.25s ease;
+}
+
+.top-brand-left:hover .alta-logo-img {
+  transform: translateY(-2px) scale(1.04);
+  filter: drop-shadow(0 4px 16px rgba(255, 122, 26, 0.45));
+}
+
+body.dark .alta-logo-img {
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+}
+
+body.dark .top-brand-left:hover .alta-logo-img {
+  filter: drop-shadow(0 4px 18px rgba(255, 122, 26, 0.5));
+}
+
+/* Bottom Controls: Test Alarm & Sound Toggle */
+.bottom-controls {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .ctrl-btn {

@@ -21,15 +21,11 @@
   <!-- Three.js 3D WebGL Canvas for 3D Bats, and Embers -->
   <div id="three-container"></div>
 
-  <!-- TOP LEFT: Test Alarm & Sound Controls -->
-  <div class="top-controls-left">
-    <button id="test-alert-btn" class="ctrl-btn test-alarm-btn" type="button" title="Test Emergency Red Light & Beep Alarm">
-      <span class="ctrl-icon-pulse">🚨</span>
-      <span class="ctrl-label">Test Alarm</span>
-    </button>
-    <button id="sound-toggle-btn" class="ctrl-btn sound-btn" type="button" title="Audio Alerts: ON (click to mute)">
-      <span id="sound-icon">🔊</span>
-    </button>
+  <!-- TOP LEFT: ALTA School of Technology Brand Logo -->
+  <div class="top-brand-left">
+    <a href="https://altaschool.com" target="_blank" rel="noopener noreferrer" class="alta-logo-link" title="ALTA School of Technology">
+      <img id="alta-logo" src="alta-logo-light.png" alt="ALTA School of Technology Logo" class="alta-logo-img" />
+    </a>
   </div>
 
   <!-- THEME TOGGLE BUTTON -->
@@ -57,18 +53,12 @@
 
   <div class="page">
 
-    <!-- TOP: ALTA + Powered by Unstop -->
-    <div class="top-bar">
-      <span class="top-bar-text">ALTA School of Technology NCR &nbsp;·&nbsp; Powered by Unstop</span>
-    </div>
-
     <!-- LOGO -->
     <div class="logo-wrap">
       <img id="logo-img" src="logo-light.png" alt="HackO'Ween Logo" class="logo-img" />
     </div>
 
     <!-- TAGLINE -->
-    <p class="tagline">12-Hour Hackathon &nbsp;·&nbsp; IITM, Sonipat &nbsp;·&nbsp; Oct 27–28, 2026</p>
     <p class="sub-tagline">Ideas that haunt. <span class="accent">Solutions that impact.</span></p>
 
     <!-- ALERT BANNER -->
@@ -109,6 +99,17 @@
       </div>
     </div>
 
+  </div>
+ 
+  <!-- BOTTOM CONTROLS: Test Alarm & Sound Toggle -->
+  <div class="bottom-controls">
+    <button id="test-alert-btn" class="ctrl-btn test-alarm-btn" type="button" title="Test Emergency Red Light & Beep Alarm">
+      <span class="ctrl-icon-pulse">🚨</span>
+      <span class="ctrl-label">Test Alarm</span>
+    </button>
+    <button id="sound-toggle-btn" class="ctrl-btn sound-btn" type="button" title="Audio Alerts: ON (click to mute)">
+      <span id="sound-icon">🔊</span>
+    </button>
   </div>
 
   <!-- Scripts -->

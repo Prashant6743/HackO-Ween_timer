@@ -18,6 +18,7 @@ const displayEl       = document.getElementById('timer-display');
 const endedEl         = document.getElementById('timer-ended-msg');
 const timerWrap       = document.getElementById('timer-wrap');
 const logoImg         = document.getElementById('logo-img');
+const altaLogo        = document.getElementById('alta-logo');
 const themeToggle     = document.getElementById('theme-toggle');
 const themeLabel      = document.getElementById('theme-label');
 const redAlertOverlay = document.getElementById('red-alert-overlay');
@@ -49,6 +50,10 @@ function applyTheme(theme) {
 
   if (logoImg) {
     logoImg.src = isDark ? 'logo-dark.png' : 'logo-light.png';
+  }
+
+  if (altaLogo) {
+    altaLogo.src = isDark ? 'alta-logo-dark.png' : 'alta-logo-light.png';
   }
 
   if (themeLabel) {
@@ -287,6 +292,31 @@ async function sync() {
   }
 }
 
+let hasAnnouncedStart = false;
+
+function playKickoffChime() {
+  if (!soundEnabled) return;
+  playBeepTone(523.25, 0.18, 'triangle', 0.4);
+  setTimeout(() => playBeepTone(659.25, 0.18, 'triangle', 0.4), 160);
+  setTimeout(() => playBeepTone(783.99, 0.25, 'triangle', 0.45), 320);
+  setTimeout(() => playBeepTone(1046.50, 0.5, 'sine', 0.5), 520);
+}
+
+function triggerKickoffEvent() {
+  if (hasAnnouncedStart) return;
+  hasAnnouncedStart = true;
+
+  if (alertBanner && alertBannerText) {
+    alertBannerText.textContent = '🚀 HACKATHON IS OFFICIALLY LIVE! TIME TO BUILD!';
+    alertBanner.classList.remove('hidden');
+    setTimeout(() => {
+      alertBanner.classList.add('hidden');
+    }, 12000);
+  }
+
+  playKickoffChime();
+}
+
 /* ─── Update loop ─── */
 function update() {
   if (!startUTC || !endUTC) return;
@@ -301,6 +331,16 @@ function update() {
     phaseEl.textContent = '🎃 Hackathon Complete!';
     dismissAlert(true);
     return;
+  }
+
+  if (t >= start && t < end) {
+    if (!hasAnnouncedStart && startUTC) {
+      if (t - start < 30000) {
+        triggerKickoffEvent();
+      } else {
+        hasAnnouncedStart = true;
+      }
+    }
   }
 
   const target = t < start ? start : end;
