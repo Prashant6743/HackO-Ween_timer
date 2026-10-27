@@ -28,28 +28,51 @@
     </a>
   </div>
 
-  <!-- THEME TOGGLE BUTTON -->
-  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Switch theme">
-    <span class="toggle-track">
-      <span class="toggle-thumb">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
+  <!-- TOP RIGHT CONTROLS: Theme Toggle, Sound Toggle & Fullscreen -->
+  <div class="top-right-controls">
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Switch theme">
+      <span class="toggle-track">
+        <span class="toggle-thumb">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </span>
       </span>
-    </span>
-    <span class="toggle-text" id="theme-label">Dark</span>
-  </button>
+      <span class="toggle-text" id="theme-label">Dark</span>
+    </button>
+
+    <button id="sound-toggle-btn" class="top-icon-btn sound-btn" type="button" aria-label="Toggle Audio Alerts" title="Audio Alerts: ON (click to mute)">
+      <svg id="sound-icon-on" class="sound-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+      <svg id="sound-icon-off" class="sound-svg hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    </button>
+
+    <button id="fullscreen-btn" class="top-icon-btn fullscreen-btn" type="button" aria-label="Toggle Fullscreen" title="Toggle Fullscreen Mode (F)">
+      <svg id="fullscreen-icon-enter" class="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+      </svg>
+      <svg id="fullscreen-icon-exit" class="fs-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+      </svg>
+    </button>
+  </div>
 
   <div class="page">
 
@@ -135,17 +158,7 @@
     </div>
 
   </div>
- 
-  <!-- BOTTOM CONTROLS: Test Alarm & Sound Toggle -->
-  <div class="bottom-controls">
-    <button id="test-alert-btn" class="ctrl-btn test-alarm-btn" type="button" title="Test Emergency Red Light & Beep Alarm">
-      <span class="ctrl-icon-pulse">🚨</span>
-      <span class="ctrl-label">Test Alarm</span>
-    </button>
-    <button id="sound-toggle-btn" class="ctrl-btn sound-btn" type="button" title="Audio Alerts: ON (click to mute)">
-      <span id="sound-icon">🔊</span>
-    </button>
-  </div>
+
 
   <!-- Scripts -->
   <script src="three.min.js"></script>

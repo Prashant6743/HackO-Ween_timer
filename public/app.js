@@ -34,6 +34,12 @@ const alertDismissBtn = document.getElementById('alert-dismiss-btn');
 const testAlertBtn    = document.getElementById('test-alert-btn');
 const soundToggleBtn  = document.getElementById('sound-toggle-btn');
 const soundIcon       = document.getElementById('sound-icon');
+const soundIconOn     = document.getElementById('sound-icon-on');
+const soundIconOff    = document.getElementById('sound-icon-off');
+const fullscreenBtn   = document.getElementById('fullscreen-btn');
+const fsIconEnter     = document.getElementById('fullscreen-icon-enter');
+const fsIconExit      = document.getElementById('fullscreen-icon-exit');
+const fsLabel         = document.getElementById('fullscreen-label');
 
 /* ─── Theme Management ─── */
 const THEMES = {
@@ -157,7 +163,13 @@ function playAlertSiren() {
 if (soundToggleBtn) {
   soundToggleBtn.addEventListener('click', () => {
     soundEnabled = !soundEnabled;
-    soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+    if (soundIconOn && soundIconOff) {
+      soundIconOn.classList.toggle('hidden', !soundEnabled);
+      soundIconOff.classList.toggle('hidden', soundEnabled);
+    }
+    if (soundIcon) {
+      soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+    }
     soundToggleBtn.title = soundEnabled ? 'Audio Alerts: ON (click to mute)' : 'Audio Alerts: MUTED (click to enable)';
     if (soundEnabled) {
       getAudioContext();
@@ -165,6 +177,84 @@ if (soundToggleBtn) {
     }
   });
 }
+
+// Fullscreen mode handler
+function isFullscreen() {
+  return Boolean(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement
+  );
+}
+
+function updateFullscreenUI() {
+  const active = isFullscreen();
+  if (fsIconEnter && fsIconExit) {
+    if (active) {
+      fsIconEnter.classList.add('hidden');
+      fsIconExit.classList.remove('hidden');
+    } else {
+      fsIconEnter.classList.remove('hidden');
+      fsIconExit.classList.add('hidden');
+    }
+  }
+  if (fsLabel) {
+    fsLabel.textContent = active ? 'Exit' : 'Fullscreen';
+  }
+  if (fullscreenBtn) {
+    fullscreenBtn.title = active ? 'Exit Fullscreen (Esc or F)' : 'Toggle Fullscreen Mode (F)';
+  }
+}
+
+async function toggleFullscreen() {
+  try {
+    if (!isFullscreen()) {
+      const el = document.documentElement;
+      if (el.requestFullscreen) {
+        await el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        await el.webkitRequestFullscreen();
+      } else if (el.msRequestFullscreen) {
+        await el.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        await document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        await document.msExitFullscreen();
+      }
+    }
+  } catch (err) {
+    console.warn('Fullscreen request:', err);
+  }
+  updateFullscreenUI();
+}
+
+if (fullscreenBtn) {
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+}
+
+document.addEventListener('fullscreenchange', updateFullscreenUI);
+document.addEventListener('webkitfullscreenchange', updateFullscreenUI);
+document.addEventListener('mozfullscreenchange', updateFullscreenUI);
+document.addEventListener('MSFullscreenChange', updateFullscreenUI);
+
+// Keyboard shortcut: Press 'F' to toggle fullscreen
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'f' || e.key === 'F') {
+    const activeEl = document.activeElement;
+    const tag = activeEl ? activeEl.tagName.toLowerCase() : '';
+    if (tag === 'input' || tag === 'textarea' || (activeEl && activeEl.isContentEditable)) {
+      return;
+    }
+    e.preventDefault();
+    toggleFullscreen();
+  }
+});
+
 
 /* ─── Emergency Red Light & Milestones Alert System ─── */
 const ALERT_MILESTONES = [

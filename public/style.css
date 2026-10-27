@@ -125,12 +125,20 @@ body::before {
   display: block;
 }
 
-/* ---- Theme Toggle Button ---- */
-.theme-toggle {
+/* ---- Top Right Controls (Theme Toggle & Fullscreen) ---- */
+.top-right-controls {
   position: fixed;
   top: 22px;
   right: 28px;
   z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- Theme Toggle Button ---- */
+.theme-toggle {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -162,6 +170,54 @@ body::before {
 
 .theme-toggle:active {
   transform: translateY(0) scale(0.98);
+}
+
+/* Top Icon Button: Fullscreen */
+.top-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  color: var(--toggle-text);
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--toggle-shadow);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              border-color 0.3s ease,
+              background 0.3s ease,
+              color 0.3s ease;
+  padding: 0;
+}
+
+.top-icon-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+  border-color: rgba(255, 122, 26, 0.6);
+  box-shadow: var(--toggle-shadow), 0 0 18px var(--orange-glow);
+  color: var(--orange);
+}
+
+.top-icon-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.top-icon-btn .fs-icon,
+.top-icon-btn .sound-svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  stroke: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.top-icon-btn:hover .fs-icon,
+.top-icon-btn:hover .sound-svg {
+  transform: scale(1.12);
 }
 
 /* Switch track & thumb */
@@ -690,10 +746,22 @@ body:not(.dark) .judging-pill {
     min-height: 100vh;
     padding: 80px 16px 36px;
   }
-  .theme-toggle {
+  .top-right-controls {
     top: 16px;
     right: 16px;
+    gap: 8px;
+  }
+  .theme-toggle {
     padding: 6px 12px 6px 8px;
+  }
+  .top-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .top-icon-btn .fs-icon,
+  .top-icon-btn .sound-svg {
+    width: 15px;
+    height: 15px;
   }
   .toggle-track {
     width: 38px;
@@ -995,5 +1063,26 @@ body.dark .top-brand-left:hover .alta-logo-img {
 
 .sound-btn {
   padding: 8px 12px;
+}
+
+.fullscreen-btn {
+  padding: 8px 13px;
+}
+
+.fs-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  stroke: currentColor;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fullscreen-btn:hover .fs-icon {
+  transform: scale(1.18);
+}
+
+.fullscreen-btn:hover {
+  border-color: rgba(255, 122, 26, 0.6);
+  box-shadow: var(--toggle-shadow), 0 0 18px var(--orange-glow);
 }
 
