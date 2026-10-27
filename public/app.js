@@ -96,7 +96,7 @@ applyTheme(currentTheme);
 
 /* ─── Audio Synthesizer (Beep Alert) ─── */
 let audioCtx = null;
-let soundEnabled = true;
+let soundEnabled = false;
 
 function getAudioContext() {
   if (!audioCtx) {

@@ -38,6 +38,17 @@ app.get('/admin', (req, res) => {
   res.redirect('/ud');
 });
 
+/**
+ * Route: Pass the Prop Game (/game and /prop)
+ */
+app.get('/game', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'game.html'));
+});
+
+app.get('/prop', (req, res) => {
+  res.redirect('/game');
+});
+
 // Fallback: serve index.html for any unmatched routes (SPA support)
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

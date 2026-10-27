@@ -4,6 +4,8 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/ud", "destination": "/ud.html" },
     { "source": "/admin", "destination": "/ud.html" },
-    { "source": "/((?!api/|ud|admin).*)", "destination": "/index.html" }
+    { "source": "/game", "destination": "/game.html" },
+    { "source": "/prop", "destination": "/game.html" },
+    { "source": "/((?!api/|ud|admin|game|prop).*)", "destination": "/index.html" }
   ]
 }
